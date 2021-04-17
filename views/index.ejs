@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <form action="http://localhost:3000/upload" method="post" encType="multipart/form-data">
+      <ul>
+        <li>음성 파일 1 : <input type="file" name="audioFile1"></li>
+        <li>음성 파일 2 : <input type="file" name="audioFile2"></li>
+        <li>음성 파일 3 : <input type="file" name="audioFile3"></li>
+        <li><button type="submit">제출</button></li>
+      </ul>
+        
+      </div>
+    </form>
+  </body>
+</html>
