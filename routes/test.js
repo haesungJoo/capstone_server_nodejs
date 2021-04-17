@@ -25,7 +25,7 @@ var upload = multer({
   storage: storage,
   fileFilter: filter,
 });
-
+var test = "test"
 var fields = [
   {name: 'audioFile1'},
   {name: 'audioFile2'},
