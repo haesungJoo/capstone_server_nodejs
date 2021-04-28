@@ -65,11 +65,7 @@ router.post('/', upload.fields(fields), function (req, res, next) {
           errorSender(res, errorMessage)
         }else{
           console.log("here")
-          downloadPmdlAndBackgroundProcessing(res).then(()=>{
-              console.log("??")
-              deleteAllAudiofilesAndPmdlFile()
-            }
-          );
+          downloadPmdlAndBackgroundProcessing(res)
         }
         
         console.log(data)
@@ -80,13 +76,15 @@ function errorSender(res, errorMessage){
   res.send(errorMessage)
 }
 
-async function downloadPmdlAndBackgroundProcessing(res){
+function downloadPmdlAndBackgroundProcessing(res){
   try{
     const file = 'hotword.pmdl'
-    res.download(file); 
-    // res.download 자체가 비동기여서 await로 동기화 할 수 가 없는듯 하다?
-    // 결정적인 문제는, file을 보내야 하는데, deleteAllAudiofilesAndPmdlFile로 모두 삭제하는 것 때문임으로
-    // 밑의 코드에서 보다싶이, 임시방안으로 setTimeout으로 약간 늦춰서 파일을 삭제하여준다.
+    res.download(file, function(error){
+      deleteAllAudiofilesAndPmdlFile()
+    })
+    // res.download를 promise로 callback을 만들어주려고 했으나,
+    // 해당 방법은 flow 자체가 달라서 불가능하다. 따라
+    // res.download 자체의 callback을 찾아주었다.
   }catch(error){
     console.log("error for downloading hotword.pmdl : ",error)
   }
@@ -109,7 +107,7 @@ function deleteAllAudiofilesAndPmdlFile(){
 
   try{
     if(fs.existsSync('hotword.pmdl')){
-      setTimeout(()=>{fs.unlinkSync('hotword.pmdl')},1500)
+      fs.unlinkSync('hotword.pmdl')
       // 
     }
   }catch(error){
