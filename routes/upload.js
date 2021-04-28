@@ -34,22 +34,33 @@ var fields = [
 ]
 
 let options = {
-    mode: 'text',
-    pythonPath: "/home/jhs/venv/snowboy/bin/python",
-    scriptPath: "public/media/",
-    // args: ['record1.wav', 'record2.wav', 'record3.wav', 'ko', 'hotword.pmdl']
-    // args: ['-r1','record1.wav', '-r2','record2.wav','-r3','record3.wav', '-lang','en', '-n','hotword.pmdl'] 
-    args: ['-r1','public/media/record1.wav', '-r2','public/media/record2.wav',
-            '-r3','public/media/record3.wav', '-lang','ko', '-n','hotword.pmdl'] 
+  mode: 'text',
+  pythonPath: "/home/jhs/venv/snowboy/bin/python",
+  scriptPath: "public/pythonScript/",
+  // args: ['record1.wav', 'record2.wav', 'record3.wav', 'ko', 'hotword.pmdl']
+  // args: ['-r1','record1.wav', '-r2','record2.wav','-r3','record3.wav', '-lang','en', '-n','hotword.pmdl']
+  args: ['-r1','public/media/record1.wav', '-r2','public/media/record2.wav',
+          '-r3','public/media/record3.wav', '-lang','ko', '-n','hotword.pmdl']
 }
 
 // '/upload'
 router.post('/', upload.fields(fields), function (req, res, next) {
   console.log('file-upload');
 
-  PythonShell.run("generate_pmdl_origin.py", options, function(err, data){
-      if(err) throw err;
-      console.log(data);
+  PythonShell.run("generate_pmdl.py", options, function(err, data){
+      // if(err) throw err;
+      // if(err.traceback.indexOf("IOError")>-1){
+      //   console.log("There is IOError")
+      // }
+      if(err){
+        console.log("err.traceback : ",err.traceback)
+        if(err.traceback.indexOf("IOError")>-1){
+          console.log("There is IOError")``
+        }
+        console.log("JSON.stringify(err) : ",JSON.stringify(err))
+      } 
+        
+      // else console.log(data);
   })
 //   res.send("success")
 //   console.log(req.files)
