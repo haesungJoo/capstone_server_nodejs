@@ -47,7 +47,7 @@ let options = {
 router.post('/', upload.fields(fields), function (req, res, next) {
     console.log('file-upload');
     var errorMessage = "";
-    PythonShell.run("generate_pmdl.py", options, function(err, data){
+    PythonShell.run("generate_pmdl.py", options, async function(err, data){
         // if(err) throw err;
         if(err){
           console.log("err.traceback : ",err.traceback)
@@ -64,8 +64,16 @@ router.post('/', upload.fields(fields), function (req, res, next) {
           deleteAllAudiofilesAndPmdlFile()
           errorSender(res, errorMessage)
         }else{
-          console.log("here")
-          downloadPmdlAndBackgroundProcessing(res)
+          // res.download(file, function(error){
+          //   deleteAllAudiofilesAndPmdlFile()
+          // })
+          try{
+            let result = await process(res)
+          }catch(error){
+            console.log("res.download Error : ",error)
+          }
+          deleteAllAudiofilesAndPmdlFile()
+          // downloadPmdlAndBackgroundProcessing(res)
         }
         
         console.log(data)
@@ -75,6 +83,34 @@ router.post('/', upload.fields(fields), function (req, res, next) {
 function errorSender(res, errorMessage){
   res.send(errorMessage)
 }
+
+function process(res){
+  return new Promise(function(reso, reje){
+    const file = 'hotword.pmdl'
+    res.download(file, function(error){
+      if(error){
+        reje(error)
+        console.log("error")
+      }
+      else {
+        reso("ok")
+        console.log("ok")
+      }
+    })
+  })
+}
+
+// process(res)
+// .then((result)=>{deleteAllAudiofilesAndPmdlFile()})
+// .catch((error)=>{deleteAllAudiofilesAndPmdlFile()})
+
+// try{
+//   let result = await process(res)
+// } catch(error){
+
+// }
+// deleteAllAudiofilesAndPmdlFile()
+
 
 function downloadPmdlAndBackgroundProcessing(res){
   try{
